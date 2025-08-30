@@ -1,18 +1,27 @@
+import os
 import time
 import datetime
 import pygame
 
 
 def set_alarm(alarm_time):
+    try:
+        datetime.datetime.strptime(alarm_time, "%H:%M:%S")
+    except ValueError:
+        raise ValueError("Alarm time must be in HH:MM:SS format") from None
+
     print(f"Alarm set for {alarm_time}")
-    sound_file="alarm_clock/alarm.wav"
-    is_running=True
+    sound_file = os.path.join(os.path.dirname(__file__), "alarm.wav")
+    if not os.path.exists(sound_file):
+        raise FileNotFoundError(f"Sound file not found: {sound_file}")
+
+    is_running = True
 
     while is_running:
-        current_time=datetime.datetime.now().strftime("%H:%M:%S")
+        current_time = datetime.datetime.now().strftime("%H:%M:%S")
         print(current_time)
 
-        if alarm_time==current_time:
+        if alarm_time == current_time:
             print("your time is up")
 
             pygame.mixer.init()
@@ -20,18 +29,9 @@ def set_alarm(alarm_time):
             pygame.mixer.music.play()
             while pygame.mixer.music.get_busy():
                 time.sleep(1)
-            is_running=False
+            is_running = False
 
         time.sleep(1)
-    
-
-
-
-
-
-
-
-
 
 
 if __name__ == "__main__":
